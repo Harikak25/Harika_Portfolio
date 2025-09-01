@@ -1,0 +1,38 @@
+# Dependencies
+/node_modules
+
+# Next.js build output
+/.next
+/out
+
+# Test & coverage outputs
+/coverage
+/playwright-report
+/test-results
+/.nyc_output
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Environment files
+.env*
+!.env.example
+
+# OS junk
+.DS_Store
+
+# IDE configs
+.vscode
+.idea
+
+# Editor swap/backup files
+*.swp
+*.swo
+/.swc
+
+
+# Optional (Turborepo / build caches)
+/.turbo
