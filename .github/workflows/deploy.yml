@@ -1,4 +1,6 @@
+# .github/workflows/deploy.yml
 name: Deploy to Vercel
+
 on:
   push:
     branches: [ main, dev ]
@@ -16,21 +18,32 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+
       - uses: actions/setup-node@v4
         with:
           node-version: 20
           cache: npm
+
       - run: npm ci
       - run: npm i -g vercel@latest
 
+      # Debug: confirm token is present (does not print the token)
+      - name: Check token presence
+        run: |
+          if [ -z "$VERCEL_TOKEN" ]; then
+            echo "VERCEL_TOKEN is empty"; exit 1
+          else
+            echo "VERCEL_TOKEN length: ${#VERCEL_TOKEN}"
+          fi
+
       - name: Pull env
-        run: vercel pull --yes --environment=$DEPLOY_ENV
+        run: vercel pull --yes --environment=$DEPLOY_ENV --token=$VERCEL_TOKEN
 
       - name: Build
-        run: vercel build $PROD_FLAG
+        run: vercel build $PROD_FLAG --token=$VERCEL_TOKEN
 
       - name: Deploy
         run: |
           set -e
-          URL=$(vercel deploy --prebuilt $PROD_FLAG | tail -n1)
+          URL=$(vercel deploy --prebuilt $PROD_FLAG --token=$VERCEL_TOKEN --yes | tail -n1)
           echo "Deployed: $URL"
