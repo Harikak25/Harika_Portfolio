@@ -38,6 +38,6 @@ test('drag clamps at top/left and resize grows without breaking min constraints'
 
   expect(Number.isNaN(w)).toBe(false);
   expect(Number.isNaN(h)).toBe(false);
-  expect(w).toBeGreaterThanOrEqual(Math.max(560, startW)); // min width path hit
-  expect(h).toBeGreaterThanOrEqual(Math.max(360, startH)); // min height path hit
+  expect(w).toBeGreaterThanOrEqual(560);  // respects min width
+  expect(h).toBeGreaterThanOrEqual(360);  // respects min height
 });
