@@ -1,9 +1,16 @@
 import { defineConfig } from '@playwright/test';
+
 export default defineConfig({
-  testDir: './tests/e2e',
-  timeout: 30_000,
-  fullyParallel: true,
-  reporter: [['list']],
-  use: { baseURL: 'http://localhost:3000', trace: 'on-first-retry' },
-  webServer: { command: 'npm run start', port: 3000, reuseExistingServer: !process.env.CI, timeout: 60_000 }
+  testDir: 'tests/e2e',
+  timeout: 30 * 1000,
+  use: {
+    headless: true,
+    baseURL: 'http://localhost:3000', // matches Next.js dev server
+  },
+  webServer: {
+    command: 'npm run build && npm run start',
+    port: 3000,
+    timeout: 120 * 1000,
+    reuseExistingServer: !process.env.CI,
+  },
 });
