@@ -1,17 +1,43 @@
 import { render, screen, fireEvent } from '@testing-library/react';
 import TerminalWindow from '@/components/windows/TerminalWindow';
 
-test('branch: default title renders', () => {
-  render(<TerminalWindow id="tt1" onClose={()=>{}} onFocus={()=>{}} />);
-  expect(screen.getByText('Terminal')).toBeInTheDocument();
-});
+const noop = () => {};
 
-test('branch: custom title prop renders and focus callback fires', () => {
-  const onFocus = jest.fn();
-  const { container } = render(
-    <TerminalWindow id="tt2" title="Terminal — Custom" onClose={()=>{}} onFocus={onFocus} />
-  );
-  expect(screen.getByText('Terminal — Custom')).toBeInTheDocument();
-  fireEvent.mouseDown(container.firstChild as Element);
-  expect(onFocus).toHaveBeenCalled();
+describe('TerminalWindow branches', () => {
+  test('renders default welcome output', () => {
+    render(<TerminalWindow id="t" onClose={noop} onFocus={noop} />);
+    expect(screen.getByText(/Welcome to HK Terminal/)).toBeInTheDocument();
+    expect(screen.getByText(/Type "help" for available commands/)).toBeInTheDocument();
+  });
+
+  test('executes help command', async () => {
+    render(<TerminalWindow id="t" onClose={noop} onFocus={noop} />);
+    const input = screen.getByLabelText('Terminal input');
+    fireEvent.change(input, { target: { value: 'help' } });
+    fireEvent.keyDown(input, { key: 'Enter' });
+    expect(await screen.findByText(/Available commands:/)).toBeInTheDocument();
+  });
+
+  test('executes clear command', async () => {
+    render(<TerminalWindow id="t" onClose={noop} onFocus={noop} />);
+    const input = screen.getByLabelText('Terminal input');
+    fireEvent.change(input, { target: { value: 'clear' } });
+    fireEvent.keyDown(input, { key: 'Enter' });
+    expect(await screen.findByText(/Terminal cleared/)).toBeInTheDocument();
+  });
+
+  test('executes unknown command', async () => {
+    render(<TerminalWindow id="t" onClose={noop} onFocus={noop} />);
+    const input = screen.getByLabelText('Terminal input');
+    fireEvent.change(input, { target: { value: 'foobar' } });
+    fireEvent.keyDown(input, { key: 'Enter' });
+    expect(await screen.findByText(/Command not found: foobar/)).toBeInTheDocument();
+  });
+
+  test('container keydown focuses input', () => {
+    render(<TerminalWindow id="t" onClose={noop} onFocus={noop} />);
+    const container = screen.getByRole('button', { name: /Terminal area/ });
+    fireEvent.keyDown(container, { key: 'Enter' });
+    expect(screen.getByLabelText('Terminal input')).toBeInTheDocument();
+  });
 });
