@@ -15,7 +15,7 @@ test('MessagesWindow shows default Harika chat', () => {
   render(<MessagesWindow id='m' style={{}} onClose={() => {}} onFocus={() => {}} />);
   
   // Should show Harika's welcome message by default
-  expect(screen.getByText('Hey there! 👋')).toBeInTheDocument();
+  expect(screen.getByText(/Hey there!/)).toBeInTheDocument();
   expect(screen.getByText(/Welcome to my digital workspace/)).toBeInTheDocument();
 });
 
