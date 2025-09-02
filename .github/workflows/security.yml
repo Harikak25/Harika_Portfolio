@@ -1,6 +1,5 @@
 # .github/workflows/security.yml
-name: "CodeQL"
-
+name: CodeQL
 on:
   push:
     branches: [ main, dev ]
@@ -11,22 +10,28 @@ on:
 
 jobs:
   analyze:
-    name: Analyze
     runs-on: ubuntu-latest
     permissions:
-      actions: read
       contents: read
       security-events: write
-
+      actions: read
     strategy:
-      fail-fast: false
       matrix:
-        language: [ 'javascript' ]
+        language: [javascript]
 
     steps:
       - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
       - uses: github/codeql-action/init@v3
         with:
           languages: ${{ matrix.language }}
-      - uses: github/codeql-action/autobuild@v3
+
+      - run: npm ci
+      - run: npm run build
+
       - uses: github/codeql-action/analyze@v3
